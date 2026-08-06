@@ -1,0 +1,37 @@
+# Nexus ML Pipeline — Python dependencies
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+redis>=5.2.0
+numpy>=1.26.0
+pandas>=2.2.0
+scipy>=1.14.0
+
+# ML frameworks
+xgboost>=2.1.0
+lightgbm>=4.5.0
+scikit-learn>=1.5.0
+torch>=2.4.0
+transformers>=4.45.0
+sentencepiece>=0.2.0
+
+# HMM regime detection
+hmmlearn>=0.3.0
+
+# Reinforcement Learning
+stable-baselines3>=2.3.0
+gymnasium>=0.29.0
+
+# Experiment tracking
+mlflow>=2.17.0
+
+# Backtesting (optional)
+# vectorbt>=0.26.0
+
+# Utilities
+joblib>=1.4.0
+psutil>=6.0.0
+
+# Calibration + hyperparameter optimization
+optuna>=4.0.0
+mapie>=0.9.0

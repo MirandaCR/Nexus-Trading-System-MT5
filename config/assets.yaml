@@ -1,0 +1,135 @@
+# ─────────────────────────────────────────────────────────
+#  Nexus Trader — Tradeable Assets per Broker + Specs
+#  Specs drive SL/TP, sizing, and PnL across all services.
+# ─────────────────────────────────────────────────────────
+
+specs:
+  XAUUSD:
+    pip_size: 0.01
+    digits: 2
+    contract_size: 100.0
+    pip_value_per_lot: 1.0
+    spread_limit_pips: 3.0
+    min_sl_pips: 10.0
+    min_tp_pips: 15.0
+    min_atr: 3.0
+    asset_class: commodity
+  EURUSD:
+    pip_size: 0.0001
+    digits: 5
+    contract_size: 100000.0
+    pip_value_per_lot: 10.0
+    spread_limit_pips: 2.0
+    min_sl_pips: 8.0
+    min_tp_pips: 12.0
+    min_atr: 0.001
+    asset_class: forex
+  GBPUSD:
+    pip_size: 0.0001
+    digits: 5
+    contract_size: 100000.0
+    pip_value_per_lot: 10.0
+    spread_limit_pips: 2.5
+    min_sl_pips: 8.0
+    min_tp_pips: 12.0
+    min_atr: 0.001
+    asset_class: forex
+  USDJPY:
+    pip_size: 0.01
+    digits: 3
+    contract_size: 100000.0
+    pip_value_per_lot: 6.5
+    spread_limit_pips: 2.0
+    min_sl_pips: 8.0
+    min_tp_pips: 12.0
+    min_atr: 0.10
+    asset_class: forex
+  US30:
+    pip_size: 1.0
+    digits: 1
+    contract_size: 1.0
+    pip_value_per_lot: 1.0
+    spread_limit_pips: 10.0
+    min_sl_pips: 20.0
+    min_tp_pips: 40.0
+    min_atr: 50.0
+    asset_class: index
+  # Verified against the live XM broker feed (2026-07-18):
+  # digits=2, point=0.01, contract_size=1.0, vol_min=0.01.
+  # pip_size 1.0 keeps "1 pip = $1 of BTC" so pip_value_per_lot=1.0 holds.
+  # Spread runs ~$50; the old 50.0 limit sat exactly on it and rejected most
+  # signals, and min_sl/min_tp of 100/200 exceeded M5 ATR (~$31) entirely.
+  BTCUSD:
+    pip_size: 1.0
+    digits: 2
+    contract_size: 1.0
+    pip_value_per_lot: 1.0
+    spread_limit_pips: 90.0
+    min_sl_pips: 40.0
+    min_tp_pips: 80.0
+    min_atr: 15.0
+    asset_class: crypto
+
+brokers:
+  mt5:
+    forex:
+      - EURUSD
+      - GBPUSD
+      - USDJPY
+      - USDCHF
+      - AUDUSD
+      - NZDUSD
+      - USDCAD
+      - EURGBP
+      - EURJPY
+      - GBPJPY
+      - AUDJPY
+    indices:
+      - US30
+      - US500
+      - USTEC
+      - GER40
+    commodities:
+      - XAUUSD
+      - XAGUSD
+      - USOIL
+      - UKOIL
+    crypto:
+      - BTCUSD
+      - ETHUSD
+
+  ibkr:
+    forex:
+      - EURUSD
+      - GBPUSD
+      - USDJPY
+      - USDCHF
+      - AUDUSD
+      - NZDUSD
+      - USDCAD
+    stocks:
+      - SPY
+      - QQQ
+      - AAPL
+      - MSFT
+      - NVDA
+    futures:
+      - ES
+      - NQ
+      - CL
+      - GC
+
+  ccxt:
+    crypto:
+      - BTC/USDT
+      - ETH/USDT
+      - SOL/USDT
+      - BNB/USDT
+      - XRP/USDT
+      - ADA/USDT
+      - DOGE/USDT
+      - AVAX/USDT
+    exchanges:
+      - binance
+      - bybit
+      - okx

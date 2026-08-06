@@ -1,0 +1,109 @@
+# ─────────────────────────────────────────────────────────
+#  Nexus Trader — Risk Rules  (INVIOLABLE)
+#  These limits are HARDCODED. No agent or override can
+#  bypass them. The Risk Manager (A8) enforces at runtime.
+# ─────────────────────────────────────────────────────────
+
+capital:
+  max_risk_per_trade_pct: 2.0
+  # NOTE: live values for daily loss / positions / daily trades are
+  # front-configurable at runtime (see shared/runtime_settings.py — defaults
+  # daily 20%, 5 positions, 5 trades). The values here are the YAML baseline.
+  max_daily_loss_pct: 20.0
+  max_weekly_drawdown_pct: 25.0
+  # position_size_cap_lots is now DYNAMIC — calculated from equity
+  # override only if you want a hard manual cap (0 = auto)
+  position_size_cap_lots: 0
+  # Dynamic lot cap: max_lots = equity / lot_cap_equity_divisor
+  # $8500 / 40000 = 0.21 lots.  Increase divisor = more conservative.
+  lot_cap_equity_divisor: 40000
+  # Absolute hard ceiling regardless of equity (safety net)
+  lot_cap_hard_ceiling: 0.50
+
+trade_controls:
+  daily_trade_limit: 5          # front-configurable; 0 = auto (scales with equity)
+  cooldown_between_trades_sec: 120   # avoid stacking same-direction trades
+  min_conviction_to_trade: 70        # high-probability only
+
+exposure:
+  max_simultaneous_positions: 5
+  max_correlation_between_positions: 0.95
+
+execution:
+  max_spread_multiplier: 4.0    # vs rolling average spread
+  max_slippage_pips: 4.0
+  min_stop_loss_pips: 5
+  min_risk_reward: 1.5          # TP1 must be >= 1.5:1 vs SL distance (high-prob)
+
+calendar:
+  news_blackout_minutes: 0
+  friday_close_utc: "23:00"
+
+position_sizing:
+  method: dynamic_kelly
+  vol_factor:
+    low: 1.0
+    medium: 0.75
+    high: 0.5
+    extreme: 0.25
+  tilt_factor:
+    normal: 1.0
+    warning: 0.5
+    tilt: 0.0
+  session_factor:
+    off_hours: 0.5
+    sydney: 0.5
+    tokyo: 0.75
+    london: 1.0
+    new_york: 1.0
+    overlap: 1.25
+    unknown: 0.5
+
+anti_tilt:
+  consecutive_losses_warning: 6
+  consecutive_losses_pause: 9
+  recovery_cooldown_minutes: 5
+
+sl_atr_multiplier: 0.75
+
+tp_structure:
+  tp1:
+    allocation_pct: 0.5
+    atr_multiplier: 1.0
+  tp2:
+    allocation_pct: 0.3
+    atr_multiplier: 1.8
+  tp3:
+    allocation_pct: 0.2
+    trailing: true
+  session_scaling:
+    sydney:    0.6
+    tokyo:     0.7
+    london:    1.0
+    new_york:  1.0
+    overlap:   1.2
+    off_hours: 0.5
+    unknown:   0.7
+
+vol_scaling:
+  # SL factor by vol regime: high vol → tighter SL to protect capital
+  sl_factor:
+    low: 1.0
+    medium: 1.0
+    high: 0.8
+    extreme: 0.6
+  # TP factor: high vol → wider TPs to capture larger moves
+  tp_factor:
+    low: 0.8
+    medium: 1.0
+    high: 1.2
+    extreme: 1.0
+
+trailing_stop:
+  activation: after_tp1
+  trail_atr_multiplier: 0.4
+
+time_exit:
+  # front-configurable: scalping minimum hold before exit + max duration
+  min_hold_minutes: 5
+  max_duration_minutes: 60

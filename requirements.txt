@@ -1,0 +1,73 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Nexus Trader — Global Python Dependencies
+# ─────────────────────────────────────────────────────────────────────────────
+# Install:  pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Web framework & server ───────────────────────────────────────────────────
+fastapi>=0.115.0,<1.0
+uvicorn[standard]>=0.32.0,<1.0
+websockets>=13.0,<14.0
+python-multipart>=0.0.12
+orjson>=3.10.0,<4.0
+
+# ── Auth & security ─────────────────────────────────────────────────────────
+python-jose[cryptography]>=3.3.0,<4.0
+passlib[bcrypt]>=1.7.4,<2.0
+
+# ── Data & validation ───────────────────────────────────────────────────────
+pydantic>=2.0,<3.0
+pandas>=2.2.0,<3.0
+polars>=1.8.0,<2.0
+numpy>=1.26.0,<3.0
+scipy>=1.14.0,<2.0
+
+# ── Storage ──────────────────────────────────────────────────────────────────
+redis[hiredis]>=5.1.0,<6.0
+duckdb>=1.1.0,<2.0
+
+# ── Technical analysis ──────────────────────────────────────────────────────
+# pandas-ta on PyPI requires Python >=3.12; shared/pandas_ta_compat falls back to classic on 3.11
+pandas-ta-classic>=0.4.47,<0.5
+ta>=0.11.0
+quantstats>=0.0.62
+
+# ── Machine learning ────────────────────────────────────────────────────────
+scikit-learn>=1.5.0,<2.0
+xgboost>=2.1.0,<3.0
+lightgbm>=4.5.0,<5.0
+torch>=2.4.0,<3.0
+transformers>=4.44.0,<5.0
+hmmlearn>=0.3.0,<1.0
+stable-baselines3>=2.3.0,<3.0
+gymnasium>=0.29.0,<1.0
+
+# ── LLM & agents ────────────────────────────────────────────────────────────
+langchain>=0.3.0,<1.0
+langgraph>=0.2.0,<1.0
+langchain-openai>=0.2.0,<1.0    # used for DeepSeek (OpenAI-compatible)
+
+# ── Brokers & market data ───────────────────────────────────────────────────
+MetaTrader5>=5.0.4200
+ib_insync>=0.9.86
+ccxt>=4.4.0,<5.0
+yfinance>=0.2.43,<1.0
+
+# ── Experiment tracking & orchestration ──────────────────────────────────────
+mlflow>=2.16.0,<3.0
+prefect>=3.0.0,<4.0
+
+# ── Observability ────────────────────────────────────────────────────────────
+structlog>=24.4.0,<26.0
+prometheus-client>=0.21.0,<1.0
+
+# ── Notifications ────────────────────────────────────────────────────────────
+python-telegram-bot>=21.5,<22.0
+
+# ── HTTP & networking ────────────────────────────────────────────────────────
+httpx>=0.27.0,<1.0
+aiohttp>=3.10.0,<4.0
+
+# ── Config & utilities ──────────────────────────────────────────────────────
+python-dotenv>=1.0.0,<2.0
+pyyaml>=6.0.0,<7.0

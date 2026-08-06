@@ -1,0 +1,24 @@
+# ── Nexus Data Service dependencies ──────────────────────────
+# Core
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+
+# Async Redis
+redis>=5.2
+
+# Structured logging
+structlog>=24.4
+
+# Storage
+duckdb>=1.1
+
+# Market data connectors
+MetaTrader5>=5.0.45; sys_platform == "win32"
+ib_insync>=0.9.86
+ccxt>=4.4
+yfinance>=0.2.48
+pandas>=2.2
+
+# Utilities
+httpx>=0.28

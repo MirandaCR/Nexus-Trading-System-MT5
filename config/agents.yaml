@@ -1,0 +1,245 @@
+# ─────────────────────────────────────────────────────────
+#  Nexus Trader — Agent Configurations
+#  12 specialized AI agents forming the trading pipeline
+# ─────────────────────────────────────────────────────────
+
+agents:
+  # ── Analysis Layer ────────────────────────────────────
+  A1:
+    id: A1
+    name: Market Analyst
+    nickname: "El Técnico"
+    role: >
+      Technical analysis across multiple timeframes. Identifies key support/resistance,
+      trend structure, chart patterns, and indicator confluences.
+    model_cloud: deepseek-reasoner
+    model_local: llama3.3:70b
+    enabled: true
+    max_tokens: 1000
+    temperature: 0.3
+    tools:
+      - multi_timeframe_analysis
+      - support_resistance_detection
+      - indicator_confluence
+      - pattern_recognition
+      - volume_profile
+    color: "--agent-a1"
+
+  A2:
+    id: A2
+    name: News Sentinel
+    nickname: "El Periodista"
+    role: >
+      Monitors economic calendar, breaking news, and sentiment shifts in real-time.
+      Flags high-impact events and assesses their directional bias.
+    model_cloud: deepseek-chat
+    model_local: mistral:7b
+    enabled: true
+    max_tokens: 600
+    temperature: 0.2
+    tools:
+      - economic_calendar
+      - news_feed
+      - sentiment_analysis
+      - event_impact_scorer
+    color: "--agent-a2"
+
+  A3:
+    id: A3
+    name: Intermarket Analyst
+    nickname: "El Macro"
+    role: >
+      Analyzes cross-asset correlations, bond yields, commodities, and indices
+      to identify macro regimes and intermarket divergences.
+    model_cloud: deepseek-chat
+    model_local: qwen2.5:32b
+    enabled: true
+    max_tokens: 800
+    temperature: 0.3
+    tools:
+      - correlation_matrix
+      - yield_curve_analysis
+      - dxy_tracking
+      - regime_detection
+      - cross_asset_scanner
+    color: "--agent-a3"
+
+  A4:
+    id: A4
+    name: Order Flow Specialist
+    nickname: "El Microestructurero"
+    role: >
+      Reads order flow, market depth, and microstructure signals. Identifies
+      institutional activity, liquidity pools, and execution timing.
+    model_cloud: deepseek-chat
+    model_local: phi4:14b
+    enabled: true
+    max_tokens: 600
+    temperature: 0.2
+    tools:
+      - order_flow_reader
+      - depth_of_market
+      - tick_analysis
+      - liquidity_heatmap
+      - vwap_tracker
+    color: "--agent-a4"
+
+  # ── Debate Layer ──────────────────────────────────────
+  A5:
+    id: A5
+    name: Bull Researcher
+    nickname: "El Optimista"
+    role: >
+      Constructs the strongest possible bullish thesis using all available data.
+      Argues for long entries or against short entries with conviction scoring.
+    model_cloud: deepseek-chat
+    model_local: qwen2.5:32b
+    enabled: true
+    max_tokens: 800
+    temperature: 0.5
+    tools:
+      - thesis_builder
+      - evidence_aggregator
+      - conviction_scorer
+      - counter_argument_finder
+    color: "--agent-a5"
+
+  A6:
+    id: A6
+    name: Bear Researcher
+    nickname: "El Pesimista"
+    role: >
+      Constructs the strongest possible bearish thesis using all available data.
+      Argues for short entries or against long entries with conviction scoring.
+    model_cloud: deepseek-chat
+    model_local: qwen2.5:32b
+    enabled: true
+    max_tokens: 800
+    temperature: 0.5
+    tools:
+      - thesis_builder
+      - evidence_aggregator
+      - conviction_scorer
+      - counter_argument_finder
+    color: "--agent-a6"
+
+  A7:
+    id: A7
+    name: Arbitrator
+    nickname: "El Juez"
+    role: >
+      Weighs bull vs bear arguments, resolves conflicts between analysts,
+      and produces the final trade decision with conviction and direction.
+    model_cloud: deepseek-reasoner
+    model_local: llama3.3:70b
+    enabled: true
+    max_tokens: 1200
+    temperature: 0.2
+    tools:
+      - argument_evaluator
+      - consensus_builder
+      - decision_matrix
+      - historical_accuracy_lookup
+    color: "--agent-a7"
+
+  # ── Risk & Execution Layer ────────────────────────────
+  A8:
+    id: A8
+    name: Risk Manager
+    nickname: "El Guardián"
+    role: >
+      Enforces all risk rules (INVIOLABLE). Calculates position sizing,
+      validates every trade against risk limits, and manages drawdown controls.
+    model_cloud: deepseek-reasoner
+    model_local: llama3.3:70b
+    enabled: true
+    max_tokens: 800
+    temperature: 0.1
+    tools:
+      - position_sizer
+      - risk_validator
+      - correlation_checker
+      - drawdown_monitor
+      - tilt_detector
+      - circuit_breaker
+    color: "--agent-a8"
+
+  A9:
+    id: A9
+    name: Trade Executor
+    nickname: "El Operador"
+    role: >
+      Handles precise order execution via broker APIs. Optimizes entry timing,
+      manages order types, and confirms fills.
+    model_cloud: deepseek-chat
+    model_local: phi4:14b
+    enabled: true
+    max_tokens: 400
+    temperature: 0.1
+    tools:
+      - order_placer
+      - spread_monitor
+      - slippage_calculator
+      - execution_timer
+      - broker_adapter
+    color: "--agent-a9"
+
+  A10:
+    id: A10
+    name: Position Manager
+    nickname: "El Gestor"
+    role: >
+      Manages open positions post-entry. Handles TP scaling, trailing stops,
+      time-based exits, and partial closes.
+    model_cloud: deepseek-chat
+    model_local: phi4:14b
+    enabled: true
+    max_tokens: 600
+    temperature: 0.2
+    tools:
+      - tp_manager
+      - trailing_stop_engine
+      - partial_close
+      - time_exit_monitor
+      - pnl_tracker
+    color: "--agent-a10"
+
+  # ── Governance Layer ──────────────────────────────────
+  A11:
+    id: A11
+    name: Session Governor
+    nickname: "El Director"
+    role: >
+      Orchestrates the agent pipeline per market session. Controls scan cadence,
+      agent activation, and session transitions.
+    model_cloud: deepseek-chat
+    model_local: mistral:7b
+    enabled: true
+    max_tokens: 400
+    temperature: 0.1
+    tools:
+      - session_scheduler
+      - agent_orchestrator
+      - pipeline_controller
+      - cadence_manager
+    color: "--agent-a11"
+
+  A12:
+    id: A12
+    name: Portfolio Strategist
+    nickname: "El Estratega"
+    role: >
+      High-level portfolio oversight. Analyzes performance patterns, adjusts
+      strategy weights, and provides weekly strategic recommendations.
+    model_cloud: deepseek-reasoner
+    model_local: llama3.3:70b
+    enabled: true
+    max_tokens: 1500
+    temperature: 0.3
+    tools:
+      - performance_analyzer
+      - strategy_optimizer
+      - regime_allocator
+      - weekly_report_generator
+      - equity_curve_analyzer
+    color: "--agent-a12"

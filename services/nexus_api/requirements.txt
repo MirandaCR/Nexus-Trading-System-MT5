@@ -1,0 +1,10 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+websockets>=14.0
+redis>=5.2.0
+httpx>=0.28.0
+duckdb>=1.1.0
+pydantic>=2.10.0
+structlog>=24.4.0
+PyYAML>=6.0.2
+PyJWT>=2.10.0

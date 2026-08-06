@@ -1,0 +1,12 @@
+# Nexus Trader — flat settings (validated by SettingsSchema in shared/config_loader.py)
+# Override via env: NEXUS_SETTINGS__DEFAULT_SYMBOL=BTCUSD
+
+trading_mode: live
+redis_url: redis://localhost:6379/0
+duckdb_path: ./data/nexus.duckdb
+mlflow_tracking_uri: http://localhost:5000
+log_level: INFO
+heartbeat_interval: 5
+default_symbol: XAUUSD
+default_timeframe: M5
+auto_trade_enabled: true

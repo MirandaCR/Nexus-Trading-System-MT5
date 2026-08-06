@@ -1,0 +1,16 @@
+fastapi>=0.115
+uvicorn[standard]>=0.34
+pydantic>=2.9
+redis>=5.2
+numpy>=1.26
+pandas>=2.2
+pandas_ta>=0.3.14b1
+ta>=0.11
+scikit-learn>=1.5
+
+# Institutional feature engine
+hurst>=0.0.5
+antropy>=0.1.6
+stumpy>=1.13.0
+ruptures>=1.1.9
+nolds>=0.6.1

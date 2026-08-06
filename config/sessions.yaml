@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────
+#  Nexus Trader — Market Session Parameters
+#  All times in UTC
+# ─────────────────────────────────────────────────────────
+
+sessions:
+  sydney:
+    start: "22:00"
+    end: "06:00"
+    mode: conservative
+    pairs:
+      - XAUUSD
+    max_trades: 5
+    size_multiplier: 0.9
+    min_conviction: 55
+
+  tokyo:
+    start: "00:00"
+    end: "08:00"
+    mode: normal
+    pairs:
+      - XAUUSD
+    max_trades: 4
+    size_multiplier: 1.0
+    min_conviction: 55
+
+  london:
+    start: "07:00"
+    end: "16:00"
+    mode: aggressive
+    pairs:
+      - XAUUSD
+    max_trades: 8
+    size_multiplier: 1.2
+    min_conviction: 55
+
+  new_york:
+    start: "12:00"
+    end: "21:00"
+    mode: aggressive
+    pairs:
+      - XAUUSD
+    max_trades: 8
+    size_multiplier: 1.2
+    min_conviction: 55
+
+  london_ny_overlap:
+    start: "12:00"
+    end: "16:00"
+    mode: full_power
+    pairs:
+      - XAUUSD
+    max_trades: 10
+    size_multiplier: 1.35
+    min_conviction: 50
+
+  off_hours:
+    start: "21:00"
+    end: "22:00"
+    mode: opportunistic
+    pairs:
+      - XAUUSD
+    max_trades: 5
+    size_multiplier: 0.8
+    min_conviction: 55
+
+special_rules:
+  friday_wind_down:
+    no_new_positions_after: "18:00"
+    close_all_by: "23:30"
+    description: "Wind down all activity before weekend"
+
+  sunday_open:
+    market_open: "22:00"
+    monitor_only_until: "22:00"
+    description: "Monitor only during first hour of week open"

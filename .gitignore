@@ -1,0 +1,72 @@
+# ─────────────────────────────────────────────────────────────
+#  Nexus Trader — .gitignore
+#  CRÍTICO: nunca commitear credenciales (.env tiene MT5 password,
+#  DeepSeek y Anthropic API keys). Solo se versiona .env.example.
+# ─────────────────────────────────────────────────────────────
+
+# ── Secrets / entorno ──────────────────────────────────────────
+.env
+.env.*
+!.env.example
+dashboard/.env.local
+dashboard/.env*.local
+*.key
+*.pem
+secrets/
+
+# ── Python ─────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# ── Node / Next.js (dashboard) ────────────────────────────────
+node_modules/
+dashboard/.next/
+dashboard/out/
+dashboard/build/
+dashboard/dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# ── ML / datos / artefactos de runtime ────────────────────────
+mlruns/
+models_store/
+data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.pkl
+*.joblib
+
+# ── Logs ───────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Notebooks (checkpoints) ───────────────────────────────────
+notebooks/.ipynb_checkpoints/
+.ipynb_checkpoints/
+
+# ── Scripts de debug locales (opcional, no se comparten) ──────
+_check_streams.py
+_debug_consumer.py
+_reset_consumers.py
+_restart_services.py
+_test_pipeline.py
+
+# ── SO / IDE ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.claude/settings.local.json

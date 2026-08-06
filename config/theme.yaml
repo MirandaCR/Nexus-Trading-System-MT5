@@ -1,0 +1,117 @@
+# ─────────────────────────────────────────────────────────
+#  Nexus Trader — UI Theme (Joker/Batman Neon)
+#  Dark cyberpunk aesthetic with neon accents
+# ─────────────────────────────────────────────────────────
+
+theme:
+  name: "Nexus Neon"
+  variant: dark
+
+  backgrounds:
+    bg-deepest: "#0a0a0f"
+    bg-deep: "#0d0d14"
+    bg-base: "#12121a"
+    bg-surface: "#1a1a25"
+    bg-elevated: "#222233"
+    bg-hover: "#2a2a3d"
+    bg-overlay: "rgba(10, 10, 15, 0.85)"
+
+  borders:
+    border-subtle: "rgba(255, 255, 255, 0.06)"
+    border-default: "rgba(255, 255, 255, 0.10)"
+    border-strong: "rgba(255, 255, 255, 0.18)"
+
+  text:
+    text-primary: "#e8e8f0"
+    text-secondary: "#9898b0"
+    text-muted: "#5a5a72"
+    text-inverse: "#0a0a0f"
+
+  neon:
+    neon-green: "#00ff88"
+    neon-green-glow: "rgba(0, 255, 136, 0.15)"
+    neon-green-dim: "#00cc6a"
+    neon-red: "#ff2255"
+    neon-red-glow: "rgba(255, 34, 85, 0.15)"
+    neon-red-dim: "#cc1a44"
+    neon-violet: "#9945ff"
+    neon-violet-glow: "rgba(153, 69, 255, 0.15)"
+    neon-violet-dim: "#7a37cc"
+    neon-cyan: "#00d4ff"
+    neon-cyan-glow: "rgba(0, 212, 255, 0.15)"
+    neon-cyan-dim: "#00aacc"
+    neon-yellow: "#ffcc00"
+    neon-yellow-glow: "rgba(255, 204, 0, 0.15)"
+    neon-yellow-dim: "#cca300"
+
+  semantic:
+    profit: "#00ff88"
+    loss: "#ff2255"
+    neutral: "#9898b0"
+    warning: "#ffcc00"
+    info: "#00d4ff"
+    conviction-high: "#00ff88"
+    conviction-medium: "#ffcc00"
+    conviction-low: "#ff2255"
+
+  agents:
+    "--agent-a1": "#00d4ff"     # Market Analyst — cyan
+    "--agent-a2": "#ffcc00"     # News Sentinel — yellow
+    "--agent-a3": "#9945ff"     # Intermarket — violet
+    "--agent-a4": "#ff8800"     # Order Flow — orange
+    "--agent-a5": "#00ff88"     # Bull — green
+    "--agent-a6": "#ff2255"     # Bear — red
+    "--agent-a7": "#e8e8f0"     # Arbitrator — white
+    "--agent-a8": "#ff4488"     # Risk Manager — hot pink
+    "--agent-a9": "#44aaff"     # Executor — blue
+    "--agent-a10": "#88ff44"    # Position Mgr — lime
+    "--agent-a11": "#aa88ff"    # Governor — lavender
+    "--agent-a12": "#ffaa00"    # Strategist — gold
+
+  chart:
+    candle-bull: "#00ff88"
+    candle-bear: "#ff2255"
+    candle-bull-wick: "#00cc6a"
+    candle-bear-wick: "#cc1a44"
+    grid: "rgba(255, 255, 255, 0.04)"
+    crosshair: "rgba(255, 255, 255, 0.30)"
+    volume-bull: "rgba(0, 255, 136, 0.25)"
+    volume-bear: "rgba(255, 34, 85, 0.25)"
+    ma-fast: "#00d4ff"
+    ma-slow: "#9945ff"
+    bb-upper: "rgba(153, 69, 255, 0.40)"
+    bb-lower: "rgba(153, 69, 255, 0.40)"
+    bb-fill: "rgba(153, 69, 255, 0.05)"
+    support: "#00ff88"
+    resistance: "#ff2255"
+    tp-line: "#00d4ff"
+    sl-line: "#ff2255"
+    entry-line: "#ffcc00"
+
+  fonts:
+    body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+    code: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace"
+    numbers: "'JetBrains Mono', monospace"
+    size-xs: "0.625rem"     # 10px
+    size-sm: "0.75rem"      # 12px
+    size-base: "0.875rem"   # 14px
+    size-lg: "1.0rem"       # 16px
+    size-xl: "1.25rem"      # 20px
+    size-2xl: "1.5rem"      # 24px
+    size-3xl: "2.0rem"      # 32px
+
+  effects:
+    glow-sm: "0 0 4px"
+    glow-md: "0 0 8px"
+    glow-lg: "0 0 16px"
+    transition-fast: "150ms ease"
+    transition-base: "250ms ease"
+    transition-slow: "400ms ease"
+    blur-overlay: "blur(12px)"
+
+  spacing:
+    panel-padding: "1rem"
+    panel-gap: "0.75rem"
+    border-radius-sm: "0.375rem"
+    border-radius-md: "0.5rem"
+    border-radius-lg: "0.75rem"

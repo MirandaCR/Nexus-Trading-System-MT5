@@ -1,0 +1,478 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Nexus Trader — Docker Compose
+# ─────────────────────────────────────────────────────────────────────────────
+# Usage:
+#   docker compose up --build              # core services
+#   docker compose --profile dashboard up   # + Next.js UI
+#   docker compose --profile monitoring up  # + Prometheus & Grafana
+#   docker compose --profile ollama up      # + local LLM
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: nexus-trader
+
+x-common-env: &common-env
+  NEXUS_ENV: ${NEXUS_ENV:-development}
+  NEXUS_TRADING_MODE: ${NEXUS_TRADING_MODE:-paper}
+  NEXUS_SECRET_KEY: ${NEXUS_SECRET_KEY:?Set NEXUS_SECRET_KEY in .env}
+  REDIS_URL: redis://redis:6379
+  DUCKDB_PATH: /data/nexus.duckdb
+  MLFLOW_TRACKING_URI: http://mlflow:5000
+  OLLAMA_URL: http://ollama:11434
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  NEWSAPI_KEY: ${NEWSAPI_KEY:-}
+  GNEWS_KEY: ${GNEWS_KEY:-}
+  MT5_LOGIN: ${MT5_LOGIN:-}
+  MT5_PASSWORD: ${MT5_PASSWORD:-}
+  MT5_SERVER: ${MT5_SERVER:-}
+  MT5_PATH: ${MT5_PATH:-}
+  IBKR_HOST: ${IBKR_HOST:-}
+  IBKR_PORT: ${IBKR_PORT:-}
+  IBKR_CLIENT_ID: ${IBKR_CLIENT_ID:-}
+  REDDIT_CLIENT_ID: ${REDDIT_CLIENT_ID:-}
+  REDDIT_CLIENT_SECRET: ${REDDIT_CLIENT_SECRET:-}
+  TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+  TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+
+x-python-service: &python-service
+  restart: unless-stopped
+  env_file: .env
+  environment:
+    <<: *common-env
+  networks:
+    - nexus-net
+  volumes:
+    - nexus-duckdb-data:/data
+    - nexus-models:/models
+
+services:
+  # ── Infrastructure ──────────────────────────────────────────────────────
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - nexus-redis-data:/data
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.16.0
+    container_name: nexus-mlflow
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - nexus-mlflow-data:/mlflow
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  # ── Python Microservices ────────────────────────────────────────────────
+
+  nexus-data:
+    <<: *python-service
+    container_name: nexus-data
+    build:
+      context: .
+      dockerfile: services/data_engine/Dockerfile
+    ports:
+      - "9001:8001"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-data
+      NEXUS_SERVICE_PORT: "8001"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+
+  nexus-features:
+    <<: *python-service
+    container_name: nexus-features
+    build:
+      context: .
+      dockerfile: services/feature_engine/Dockerfile
+    ports:
+      - "9002:8002"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-features
+      NEXUS_SERVICE_PORT: "8002"
+    depends_on:
+      nexus-data:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+
+  nexus-news:
+    <<: *python-service
+    container_name: nexus-news
+    build:
+      context: .
+      dockerfile: services/news_sentiment/Dockerfile
+    ports:
+      - "9005:8005"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-news
+      NEXUS_SERVICE_PORT: "8005"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "0.5"
+
+  nexus-risk:
+    <<: *python-service
+    container_name: nexus-risk
+    build:
+      context: .
+      dockerfile: services/risk_manager/Dockerfile
+    ports:
+      - "9006:8006"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-risk
+      NEXUS_SERVICE_PORT: "8006"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  nexus-ml:
+    <<: *python-service
+    container_name: nexus-ml
+    build:
+      context: .
+      dockerfile: services/ml_engine/Dockerfile
+    ports:
+      - "9003:8003"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-ml
+      NEXUS_SERVICE_PORT: "8003"
+    depends_on:
+      nexus-features:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+
+  nexus-agents:
+    <<: *python-service
+    container_name: nexus-agents
+    build:
+      context: .
+      dockerfile: services/agent_hub/Dockerfile
+    ports:
+      - "9004:8004"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-agents
+      NEXUS_SERVICE_PORT: "8004"
+    depends_on:
+      nexus-ml:
+        condition: service_healthy
+      nexus-risk:
+        condition: service_healthy
+      nexus-news:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
+
+  nexus-executor:
+    <<: *python-service
+    container_name: nexus-executor
+    build:
+      context: .
+      dockerfile: services/executor/Dockerfile
+    ports:
+      - "9007:8007"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-executor
+      NEXUS_SERVICE_PORT: "8007"
+    depends_on:
+      nexus-risk:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8007/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  nexus-monitor:
+    <<: *python-service
+    container_name: nexus-monitor
+    build:
+      context: .
+      dockerfile: services/monitor/Dockerfile
+    ports:
+      - "9008:8008"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-monitor
+      NEXUS_SERVICE_PORT: "8008"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  nexus-api:
+    <<: *python-service
+    container_name: nexus-api
+    build:
+      context: .
+      dockerfile: services/api_gateway/Dockerfile
+    ports:
+      - "9000:8000"
+    environment:
+      <<: *common-env
+      NEXUS_SERVICE_NAME: nexus-api
+      NEXUS_SERVICE_PORT: "8000"
+      NEXUS_JWT_SECRET: ${NEXUS_JWT_SECRET:?Set NEXUS_JWT_SECRET in .env}
+      NEXUS_PIN: ${NEXUS_PIN:-1234}
+    depends_on:
+      nexus-data:
+        condition: service_healthy
+      nexus-features:
+        condition: service_healthy
+      nexus-ml:
+        condition: service_healthy
+      nexus-agents:
+        condition: service_healthy
+      nexus-risk:
+        condition: service_healthy
+      nexus-executor:
+        condition: service_healthy
+      nexus-monitor:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  # ── Dashboard ───────────────────────────────────────────────────────────
+
+  dashboard:
+    container_name: nexus-dashboard
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3000"
+    environment:
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me}
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://nexus-api:8000
+      NEXT_PUBLIC_WS_URL: ws://nexus-api:8000
+    depends_on:
+      nexus-api:
+        condition: service_healthy
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    profiles:
+      - dashboard
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  # ── Optional: Monitoring ────────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: nexus-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: nexus-grafana
+    ports:
+      - "3101:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-nexus}
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - nexus-net
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    profiles:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+
+  # ── Optional: Local LLM ────────────────────────────────────────────────
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: nexus-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    profiles:
+      - ollama
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: "4.0"
+
+# ── Networks & Volumes ────────────────────────────────────────────────────
+
+networks:
+  nexus-net:
+    driver: bridge
+
+volumes:
+  nexus-redis-data:
+  nexus-duckdb-data:
+  nexus-mlflow-data:
+  nexus-models:
+  ollama-models:

@@ -1,0 +1,10 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+redis>=5.2.0
+structlog>=24.4.0
+PyYAML>=6.0.2
+httpx>=0.28.0
+MetaTrader5>=5.0.45
+ib_insync>=0.9.86
+ccxt>=4.4.0
