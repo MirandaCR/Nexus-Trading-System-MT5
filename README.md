@@ -32,7 +32,6 @@
 | **[This README](README.md)** | Architecture, AI stack, how it trades, setup |
 | **[README en Español](README.es.md)** | Full Spanish translation |
 | **[.env.example](.env.example)** | Every configuration knob, documented |
-| **[docs/screenshots](docs/screenshots)** | Dashboard captures + capture guide |
 
 ---
 
@@ -225,19 +224,27 @@ Risk is a **first-class service**, not an afterthought. Limits are **inviolable 
 
 A real-time **Next.js 14** control room (tabs: *Overview, Positions, Risk, News, Agents, Intelligence, Journal, Backtest, Console*) streaming over WebSockets + SSE: live session clock, ML pipeline status, the A7 arbitrator's reasoning, the risk monitor with every circuit breaker, correlation matrix, cross-asset panel and a backtest runner.
 
-> 📸 Screenshots live in [`docs/screenshots/`](docs/screenshots). See the [capture guide](docs/screenshots/README.md) to add your own.
-
-<!-- Add captures as you take them; filenames are pre-wired: -->
+**Overview** — live P&L, market regime, the A7 decision with conviction, session clock and open positions:
 ![Dashboard — Overview](docs/screenshots/dashboard-overview.png)
-![Intelligence — models & agents](docs/screenshots/intelligence.png)
+
+**Intelligence** — the ML ensemble votes, the bull/bear agent debate, cross-asset, correlation matrix and the PPO strategy lifecycle:
+![Intelligence](docs/screenshots/intelligence.png)
+
+**Agents** — the LangGraph pipeline, the bull vs bear reasoning and the arbitrator's verdict:
+![Agents — decision](docs/screenshots/agents-decision.png)
+
+**Risk Monitor** — every circuit breaker, the daily-loss (20%) and drawdown gauges, anti-tilt and dynamic sizing:
 ![Risk Monitor](docs/screenshots/risk-monitor.png)
+
+**Backtest** — the walk-forward engine, out-of-sample equity curve and metrics:
+![Backtest](docs/screenshots/backtest.png)
 
 ---
 
 ## 🧰 Tech stack
 
 **Backend** · Python 3.11+ · FastAPI · Pydantic v2 · Redis (streams + cache) · DuckDB
-**ML/AI** · XGBoost · LightGBM · PyTorch (LSTM) · scikit-learn · hmmlearn · stable-baselines3 (PPO) · LangChain / LangGraph · DeepSeek (OpenAI-compatible) · FinBERT
+**ML/AI** · XGBoost · LightGBM · PyTorch (LSTM) · scikit-learn · hmmlearn · stable-baselines3 (PPO) · LangChain / LangGraph · **DeepSeek / OpenAI (GPT) / Gemini** (selectable) · FinBERT
 **Market** · MetaTrader5 · pandas-ta
 **Frontend** · Next.js 14 (App Router) · React · TypeScript · Tailwind · TanStack Query · WebSockets/SSE
 **Infra** · Redis (Docker) · a Python supervisor (`run.py`) that boots and heals the whole fleet
@@ -294,9 +301,12 @@ Everything is driven by `.env` (see **[.env.example](.env.example)** for the ful
 | `MT5_LOGIN` / `MT5_PASSWORD` / `MT5_SERVER` | Your MT5 **demo** credentials (never commit them) |
 | `STREAM_SYMBOLS` | Symbols to trade, e.g. `XAUUSD,BTCUSD` |
 | `NEXUS_TRADING_MODE` | `live` / paper behavior |
-| `DEEPSEEK_API_KEY` | Enables the GenAI multi-agent debate |
+| `NEXUS_LLM_PROVIDER` | **Which AI powers the agents** — `deepseek` (default), `openai` (GPT), `gemini`, or `local` |
+| `DEEPSEEK_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` | Key for the selected provider (only one needed) |
 | `NEXUS_FIXED_LOTS` | Per-symbol fixed lot (e.g. `BTCUSD=0.02`) |
 | `NEXUS_LOG_JSON` | `false` = readable console logs, `true` = JSON for prod |
+
+> 🧠 **Pick your AI.** The GenAI agents run on **DeepSeek** by default, but you can switch to **OpenAI (GPT)** or **Google Gemini** with a single env var — all three use OpenAI-compatible endpoints, so no extra dependencies. The quantitative ML ensemble runs regardless of provider.
 
 Runtime risk limits (daily loss, positions, conviction…) live in **Redis** and are editable from the dashboard **Settings** — no redeploy needed.
 

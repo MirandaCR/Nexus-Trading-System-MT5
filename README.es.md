@@ -32,7 +32,6 @@
 | **[README en Inglés](README.md)** | Arquitectura, stack de IA, cómo opera, instalación |
 | **[Este README](README.es.md)** | Traducción completa al español |
 | **[.env.example](.env.example)** | Cada parámetro de configuración, documentado |
-| **[docs/screenshots](docs/screenshots)** | Capturas del dashboard + guía de captura |
 
 ---
 
@@ -225,19 +224,27 @@ El riesgo es un **servicio de primera clase**, no un añadido. Los límites son 
 
 Una sala de control en tiempo real en **Next.js 14** (pestañas: *Overview, Positions, Risk, News, Agents, Intelligence, Journal, Backtest, Console*) transmitiendo por WebSockets + SSE: reloj de sesión en vivo, estado del pipeline de ML, el razonamiento del árbitro A7, el monitor de riesgo con cada circuit breaker, matriz de correlación, panel cross-asset y un runner de backtest.
 
-> 📸 Las capturas viven en [`docs/screenshots/`](docs/screenshots). Ve la [guía de captura](docs/screenshots/README.md) para agregar las tuyas.
-
-<!-- Agrega capturas conforme las tomes; los nombres ya están cableados: -->
+**Overview** — P&L en vivo, régimen de mercado, la decisión A7 con convicción, reloj de sesión y posiciones abiertas:
 ![Dashboard — Overview](docs/screenshots/dashboard-overview.png)
-![Intelligence — modelos y agentes](docs/screenshots/intelligence.png)
+
+**Intelligence** — los votos del ensemble ML, el debate alcista/bajista, cross-asset, matriz de correlación y el ciclo de vida de estrategias PPO:
+![Intelligence](docs/screenshots/intelligence.png)
+
+**Agents** — el pipeline LangGraph, el razonamiento alcista vs bajista y el veredicto del árbitro:
+![Agents — decisión](docs/screenshots/agents-decision.png)
+
+**Monitor de Riesgo** — cada circuit breaker, los gauges de pérdida diaria (20%) y drawdown, anti-tilt y dimensionado dinámico:
 ![Monitor de Riesgo](docs/screenshots/risk-monitor.png)
+
+**Backtest** — el motor walk-forward, la curva de equity out-of-sample y las métricas:
+![Backtest](docs/screenshots/backtest.png)
 
 ---
 
 ## 🧰 Stack tecnológico
 
 **Backend** · Python 3.11+ · FastAPI · Pydantic v2 · Redis (streams + caché) · DuckDB
-**ML/IA** · XGBoost · LightGBM · PyTorch (LSTM) · scikit-learn · hmmlearn · stable-baselines3 (PPO) · LangChain / LangGraph · DeepSeek (compatible OpenAI) · FinBERT
+**ML/IA** · XGBoost · LightGBM · PyTorch (LSTM) · scikit-learn · hmmlearn · stable-baselines3 (PPO) · LangChain / LangGraph · **DeepSeek / OpenAI (GPT) / Gemini** (seleccionable) · FinBERT
 **Mercado** · MetaTrader5 · pandas-ta
 **Frontend** · Next.js 14 (App Router) · React · TypeScript · Tailwind · TanStack Query · WebSockets/SSE
 **Infra** · Redis (Docker) · un supervisor en Python (`run.py`) que arranca y sana toda la flota
@@ -294,9 +301,12 @@ Todo se maneja desde `.env` (ve **[.env.example](.env.example)** para la lista c
 | `MT5_LOGIN` / `MT5_PASSWORD` / `MT5_SERVER` | Tus credenciales MT5 **demo** (nunca las subas) |
 | `STREAM_SYMBOLS` | Símbolos a operar, p. ej. `XAUUSD,BTCUSD` |
 | `NEXUS_TRADING_MODE` | Comportamiento `live` / paper |
-| `DEEPSEEK_API_KEY` | Activa el debate multi-agente GenAI |
+| `NEXUS_LLM_PROVIDER` | **Qué IA usan los agentes** — `deepseek` (default), `openai` (GPT), `gemini` o `local` |
+| `DEEPSEEK_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY` | Key del proveedor elegido (solo se necesita una) |
 | `NEXUS_FIXED_LOTS` | Lote fijo por símbolo (p. ej. `BTCUSD=0.02`) |
 | `NEXUS_LOG_JSON` | `false` = logs legibles en consola, `true` = JSON para prod |
+
+> 🧠 **Elige tu IA.** Los agentes GenAI corren en **DeepSeek** por defecto, pero puedes cambiar a **OpenAI (GPT)** o **Google Gemini** con una sola variable de entorno — los tres usan endpoints compatibles con OpenAI, sin dependencias extra. El ensemble cuantitativo de ML funciona con cualquier proveedor.
 
 Los límites de riesgo en runtime (pérdida diaria, posiciones, convicción…) viven en **Redis** y se editan desde **Settings** del dashboard — sin redeploy.
 

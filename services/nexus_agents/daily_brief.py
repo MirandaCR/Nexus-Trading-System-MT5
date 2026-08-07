@@ -49,26 +49,16 @@ BRIEF_HOURS_UTC = {6, 13}
 
 
 def _build_llm():
-    """Instantiate a DeepSeek or local LLM (same pattern as BaseAgent)."""
-    from langchain_openai import ChatOpenAI
-    provider = os.getenv("NEXUS_LLM_PROVIDER", "cloud")
-    if provider == "local":
-        return ChatOpenAI(
-            base_url=os.getenv("NEXUS_LOCAL_LLM_URL", "http://localhost:11434/v1"),
-            api_key="ollama",
-            model=os.getenv("NEXUS_BRIEF_MODEL_LOCAL", "llama3.3:70b"),
-            temperature=0.3,
-            max_tokens=1200,
-            request_timeout=45,
-        )
-    return ChatOpenAI(
-        base_url="https://api.deepseek.com/v1",
-        api_key=os.getenv("DEEPSEEK_API_KEY", ""),
-        model=os.getenv("NEXUS_BRIEF_MODEL_CLOUD", "deepseek-chat"),
-        temperature=0.3,
-        max_tokens=1200,
-        request_timeout=45,
-    )
+    """Instantiate the configured provider's LLM (deepseek | openai | gemini | local).
+
+    Provider is selected with ``NEXUS_LLM_PROVIDER`` via shared.llm_factory.
+    ``NEXUS_BRIEF_MODEL_CLOUD`` still overrides the model on DeepSeek.
+    """
+    from shared.llm_factory import make_llm, resolve_provider
+
+    provider = resolve_provider()
+    model = os.getenv("NEXUS_BRIEF_MODEL_CLOUD") if provider == "deepseek" else None
+    return make_llm(temperature=0.3, max_tokens=1200, model=model, request_timeout=45)
 
 
 async def _gather_context(r) -> dict:
@@ -237,7 +227,7 @@ async def generate_brief(r, symbol: str = "XAUUSD") -> dict:
         fallback = {
             "symbol": symbol,
             "bias": "NEUTRAL",
-            "summary": "Brief generation failed — using fallback. Check DEEPSEEK_API_KEY and connectivity.",
+            "summary": "Brief generation failed — using fallback. Check your AI provider API key (NEXUS_LLM_PROVIDER) and connectivity.",
             "key_drivers": [],
             "risk_events": [],
             "session_outlook": {"LONDON": "—", "NEW_YORK": "—"},

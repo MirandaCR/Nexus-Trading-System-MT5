@@ -73,37 +73,26 @@ class BaseAgent(ABC):
     # ── LLM Factory ───────────────────────────────────────────────────────
 
     def _get_llm(self, *, temperature: float | None = None, max_tokens: int | None = None, fast: bool = False):
-        """Return a LangChain chat model based on config (cloud or local)."""
-        provider = os.getenv("NEXUS_LLM_PROVIDER", "cloud")
+        """Return a LangChain chat model for the configured AI provider.
+
+        Provider is chosen with ``NEXUS_LLM_PROVIDER`` (deepseek | openai |
+        gemini | local); see shared.llm_factory. The per-agent ``model_cloud``
+        is honored only for DeepSeek — other providers use their own default
+        model unless ``NEXUS_LLM_MODEL`` overrides it.
+        """
+        from shared.llm_factory import make_llm, resolve_provider
+
         temp = temperature or self.config.get("temperature", 0.3)
         tokens = max_tokens or self.config.get("max_tokens", 800)
 
+        provider = resolve_provider()
         if provider == "local":
-            from langchain_openai import ChatOpenAI
-
-            local_url = os.getenv("NEXUS_LOCAL_LLM_URL", "http://localhost:11434/v1")
-            model = self.config.get("model_local", "llama3.3:70b")
-            return ChatOpenAI(
-                base_url=local_url,
-                api_key="ollama",
-                model=model,
-                temperature=temp,
-                max_tokens=tokens,
-                request_timeout=30,
-            )
-
-        from langchain_openai import ChatOpenAI
-
-        # DeepSeek (OpenAI-compatible)
-        model = self.config.get("model_cloud", "deepseek-chat")
-        return ChatOpenAI(
-            base_url="https://api.deepseek.com/v1",
-            api_key=os.getenv("DEEPSEEK_API_KEY", ""),
-            model=model,
-            temperature=temp,
-            max_tokens=tokens,
-            request_timeout=30,
-        )
+            model = self.config.get("model_local")
+        elif provider == "deepseek":
+            model = self.config.get("model_cloud", "deepseek-chat")
+        else:
+            model = None  # openai/gemini use the provider default
+        return make_llm(temperature=temp, max_tokens=tokens, model=model)
 
     async def _invoke_with_budget(self, chain, input_dict: dict[str, Any]) -> Any:
         """Invoke a LangChain chain with daily budget enforcement.

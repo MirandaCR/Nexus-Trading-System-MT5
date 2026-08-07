@@ -838,9 +838,10 @@ class StrategyResearcher:
 def _llm_configured() -> bool:
     if os.getenv("NEXUS_DISABLE_RESEARCH_LLM", "").lower() in ("1", "true", "yes"):
         return False
-    if os.getenv("NEXUS_LLM_PROVIDER", "cloud") == "local":
-        return True
-    return bool(os.getenv("DEEPSEEK_API_KEY"))
+    # True when the selected provider (deepseek | openai | gemini | local) has
+    # its API key set (local always ready). See shared.llm_factory.
+    from shared.llm_factory import provider_ready
+    return provider_ready()
 
 
 def _parse_strategy_list(content: str) -> list[dict[str, Any]]:
