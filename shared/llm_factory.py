@@ -43,8 +43,19 @@ SUPPORTED_PROVIDERS = ("deepseek", "openai", "gemini", "local")
 
 
 def resolve_provider() -> str:
-    """Return the normalized provider name (default: ``deepseek``)."""
-    raw = os.getenv("NEXUS_LLM_PROVIDER", DEFAULT_PROVIDER).strip().lower()
+    """Return the normalized provider name (default: ``deepseek``).
+
+    Priority: the live dashboard selection (runtime settings, editable without a
+    restart) → the ``NEXUS_LLM_PROVIDER`` env var → ``deepseek``.
+    """
+    raw = ""
+    try:
+        from shared import runtime_settings
+        raw = str(runtime_settings.get_cached().get("llm_provider") or "").strip().lower()
+    except Exception:
+        raw = ""
+    if not raw:
+        raw = os.getenv("NEXUS_LLM_PROVIDER", DEFAULT_PROVIDER).strip().lower()
     provider = _ALIASES.get(raw, raw)
     if provider not in _PROVIDERS and provider != "local":
         return DEFAULT_PROVIDER

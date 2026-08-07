@@ -225,19 +225,19 @@ El riesgo es un **servicio de primera clase**, no un añadido. Los límites son 
 Una sala de control en tiempo real en **Next.js 14** (pestañas: *Overview, Positions, Risk, News, Agents, Intelligence, Journal, Backtest, Console*) transmitiendo por WebSockets + SSE: reloj de sesión en vivo, estado del pipeline de ML, el razonamiento del árbitro A7, el monitor de riesgo con cada circuit breaker, matriz de correlación, panel cross-asset y un runner de backtest.
 
 **Overview** — P&L en vivo, régimen de mercado, la decisión A7 con convicción, reloj de sesión y posiciones abiertas:
-![Dashboard — Overview](docs/screenshots/dashboard-overview.png)
+![Dashboard — Overview](docs/screenshots/nexus-overview.png)
 
 **Intelligence** — los votos del ensemble ML, el debate alcista/bajista, cross-asset, matriz de correlación y el ciclo de vida de estrategias PPO:
-![Intelligence](docs/screenshots/intelligence.png)
+![Intelligence](docs/screenshots/nexus-intelligence.png)
 
 **Agents** — el pipeline LangGraph, el razonamiento alcista vs bajista y el veredicto del árbitro:
-![Agents — decisión](docs/screenshots/agents-decision.png)
+![Agents — decisión](docs/screenshots/nexus-agents.png)
 
 **Monitor de Riesgo** — cada circuit breaker, los gauges de pérdida diaria (20%) y drawdown, anti-tilt y dimensionado dinámico:
-![Monitor de Riesgo](docs/screenshots/risk-monitor.png)
+![Monitor de Riesgo](docs/screenshots/nexus-risk.png)
 
 **Backtest** — el motor walk-forward, la curva de equity out-of-sample y las métricas:
-![Backtest](docs/screenshots/backtest.png)
+![Backtest](docs/screenshots/nexus-backtest.png)
 
 ---
 

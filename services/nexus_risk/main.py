@@ -1079,6 +1079,7 @@ class SettingsPatch(BaseModel):
     research_interval_sec: int | None = None
     require_mtf_confirmation: bool | None = None
     min_mtf_agreement: int | None = None
+    llm_provider: str | None = None       # AI provider for GenAI agents (live-switchable)
 
 
 @app.get("/api/risk/settings")

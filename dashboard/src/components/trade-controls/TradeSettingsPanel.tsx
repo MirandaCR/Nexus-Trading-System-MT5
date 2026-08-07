@@ -24,7 +24,16 @@ interface Settings {
   max_hold_minutes: number;
   research_min_candidates: number;
   min_conviction_override: number | null;
+  llm_provider?: string;
 }
+
+// AI provider options for the GenAI agents (live-switchable, no restart).
+const LLM_PROVIDERS: Array<{ value: string; label: string }> = [
+  { value: 'deepseek', label: 'DeepSeek (default)' },
+  { value: 'openai', label: 'OpenAI · GPT' },
+  { value: 'gemini', label: 'Google Gemini' },
+  { value: 'local', label: 'Local · Ollama' },
+];
 
 interface SettingsResponse {
   settings: Settings;
@@ -183,6 +192,27 @@ export function TradeSettingsPanel() {
             />
           </div>
         ))}
+
+        {settings && (
+          <div className="flex items-center justify-between gap-3 pt-1 border-t border-border-primary/20">
+            <div className="min-w-0">
+              <div className="text-[11px] text-text-secondary font-medium">Proveedor de IA</div>
+              <div className="text-[9px] text-text-muted truncate">Motor de los agentes GenAI (debate + árbitro). Cambio en vivo.</div>
+            </div>
+            <select
+              value={settings.llm_provider ?? 'deepseek'}
+              onChange={(e) => {
+                setSettings((prev) => (prev ? { ...prev, llm_provider: e.target.value } : prev));
+                setDirty(true);
+              }}
+              className="w-36 shrink-0 rounded-md bg-bg-input border border-border-primary px-2 py-1 text-right text-xs font-mono text-neon-cyan focus:border-neon-purple/50 focus:outline-none"
+            >
+              {LLM_PROVIDERS.map((p) => (
+                <option key={p.value} value={p.value}>{p.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="flex items-center gap-2 pt-1">
           <button

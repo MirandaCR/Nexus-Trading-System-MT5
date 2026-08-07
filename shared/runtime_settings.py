@@ -20,6 +20,7 @@ so the system always has sane behaviour.
 from __future__ import annotations
 
 import asyncio
+import os
 from typing import Any
 
 try:
@@ -61,6 +62,10 @@ DEFAULTS: dict[str, Any] = {
     "trading_mode_type": "scalping",
     # Auto-select M1/M5/M15 from session + volatility + spread (scalping only)
     "auto_tf_selection": True,
+    # AI provider for the GenAI agents — front-selectable, live (no restart).
+    # deepseek (default) | openai (GPT) | gemini | local. See shared/llm_factory.
+    # Seeded from NEXUS_LLM_PROVIDER so .env sets the base; the dashboard overrides it.
+    "llm_provider": (os.getenv("NEXUS_LLM_PROVIDER") or "deepseek").strip().lower(),
 }
 
 # Bounds to keep front-supplied values sane (defensive clamping).
@@ -117,6 +122,11 @@ def _coerce(key: str, value: Any) -> Any:
             return max(0.0, min(1.0, float(value)))
         except (TypeError, ValueError):
             return None
+    if key == "llm_provider":
+        aliases = {"cloud": "deepseek", "gpt": "openai", "chatgpt": "openai", "google": "gemini"}
+        v = str(value or "").strip().lower()
+        v = aliases.get(v, v)
+        return v if v in ("deepseek", "openai", "gemini", "local") else "deepseek"
     if isinstance(default, bool):
         if isinstance(value, str):
             return value.strip().lower() in ("1", "true", "yes", "on")

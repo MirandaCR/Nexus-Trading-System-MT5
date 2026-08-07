@@ -225,19 +225,19 @@ Risk is a **first-class service**, not an afterthought. Limits are **inviolable 
 A real-time **Next.js 14** control room (tabs: *Overview, Positions, Risk, News, Agents, Intelligence, Journal, Backtest, Console*) streaming over WebSockets + SSE: live session clock, ML pipeline status, the A7 arbitrator's reasoning, the risk monitor with every circuit breaker, correlation matrix, cross-asset panel and a backtest runner.
 
 **Overview** — live P&L, market regime, the A7 decision with conviction, session clock and open positions:
-![Dashboard — Overview](docs/screenshots/dashboard-overview.png)
+![Dashboard — Overview](docs/screenshots/nexus-overview.png)
 
 **Intelligence** — the ML ensemble votes, the bull/bear agent debate, cross-asset, correlation matrix and the PPO strategy lifecycle:
-![Intelligence](docs/screenshots/intelligence.png)
+![Intelligence](docs/screenshots/nexus-intelligence.png)
 
 **Agents** — the LangGraph pipeline, the bull vs bear reasoning and the arbitrator's verdict:
-![Agents — decision](docs/screenshots/agents-decision.png)
+![Agents — decision](docs/screenshots/nexus-agents.png)
 
 **Risk Monitor** — every circuit breaker, the daily-loss (20%) and drawdown gauges, anti-tilt and dynamic sizing:
-![Risk Monitor](docs/screenshots/risk-monitor.png)
+![Risk Monitor](docs/screenshots/nexus-risk.png)
 
 **Backtest** — the walk-forward engine, out-of-sample equity curve and metrics:
-![Backtest](docs/screenshots/backtest.png)
+![Backtest](docs/screenshots/nexus-backtest.png)
 
 ---
 
