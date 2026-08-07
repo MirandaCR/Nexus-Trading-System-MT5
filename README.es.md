@@ -163,7 +163,8 @@ Aquí es donde lo cuantitativo se encuentra con el ML moderno. Nexus combina, en
 | **Detección de anomalías** | Isolation Forest | Marca estados anómalos del mercado → suprime el trading |
 | **Debate multi-agente GenAI** | LangGraph + DeepSeek | Razonamiento adversarial alcista/bajista + un árbitro que debe justificar el veredicto |
 | **Sentimiento de noticias** | FinBERT + LLM | Scoring de impacto del calendario económico y **ventanas de blackout** pre-noticia |
-| **Aprendizaje por refuerzo** | PPO (stable-baselines3) | Un agente de *ciclo de vida* promueve/retira estrategias según su desempeño en vivo |
+| **Aprendizaje por refuerzo** | PPO (PyTorch) | Un agente de *ciclo de vida* gestiona cada posición abierta bar-by-bar — mantener / trailing / mover a breakeven / cierre parcial / salir |
+| **I+D autónoma de estrategias** | research registry | La GenAI propone estrategias; se backtestean y se promueven/retiran por umbrales basados en reglas |
 | **Riesgo conductual** | motor anti-tilt | Guardias de pérdidas consecutivas y revenge-trading — la capa psicológica que casi ningún bot tiene |
 | **Shadow trades** | risk + memory | Las señales rechazadas se registran contrafácticamente para medir el costo de la cautela |
 | **Memoria de trades** | DuckDB | Win-rates por hora / sesión / régimen alimentan umbrales *dinámicos* |
@@ -204,7 +205,7 @@ Una máquina de estados LangGraph de agentes especialistas (IA Generativa vía *
 | **Portfolio Strategist / Position Manager** | Coherencia a nivel portafolio y gestión de trades abiertos |
 | **News Sentinel** | Impacto del calendario económico + ventanas de blackout |
 
-El módulo de **Research** (`research/researcher.py`, `evaluator.py`, `registry.py`) propone, backtestea y registra nuevas estrategias de forma autónoma; el **RL lifecycle** (`traders/rl_lifecycle.py`, PPO) las promueve o retira según resultados en vivo.
+El módulo de **Research** (`research/researcher.py`, `evaluator.py`, `registry.py`) propone, backtestea y promueve/retira estrategias de forma autónoma mediante **umbrales basados en reglas** (estados: active / backtested / investigating / rejected). Por separado, un **agente PPO de ciclo de vida** (`nexus_ml/traders/rl_lifecycle.py`, PyTorch) gestiona cada *posición abierta* bar-by-bar — mantener, trailing, mover a breakeven, cierre parcial o salir.
 
 ---
 
@@ -236,7 +237,7 @@ Una sala de control en tiempo real en **Next.js 14** (pestañas: *Overview, Posi
 **Monitor de Riesgo** — cada circuit breaker, los gauges de pérdida diaria (20%) y drawdown, anti-tilt y dimensionado dinámico:
 ![Monitor de Riesgo](docs/screenshots/nexus-risk.png)
 
-**Backtest** — el motor walk-forward, la curva de equity out-of-sample y las métricas:
+**Backtest** — un backtest de filtro de parámetros sobre tus trades cerrados históricos (WR, PF, Sharpe, max drawdown) con curva de P&L acumulado:
 ![Backtest](docs/screenshots/nexus-backtest.png)
 
 ---
@@ -244,7 +245,7 @@ Una sala de control en tiempo real en **Next.js 14** (pestañas: *Overview, Posi
 ## 🧰 Stack tecnológico
 
 **Backend** · Python 3.11+ · FastAPI · Pydantic v2 · Redis (streams + caché) · DuckDB
-**ML/IA** · XGBoost · LightGBM · PyTorch (LSTM) · scikit-learn · hmmlearn · stable-baselines3 (PPO) · LangChain / LangGraph · **DeepSeek / OpenAI (GPT) / Gemini** (seleccionable) · FinBERT
+**ML/IA** · XGBoost · LightGBM · PyTorch (LSTM + PPO propio) · scikit-learn · hmmlearn · LangChain / LangGraph · **DeepSeek / OpenAI (GPT) / Gemini** (seleccionable) · FinBERT
 **Mercado** · MetaTrader5 · pandas-ta
 **Frontend** · Next.js 14 (App Router) · React · TypeScript · Tailwind · TanStack Query · WebSockets/SSE
 **Infra** · Redis (Docker) · un supervisor en Python (`run.py`) que arranca y sana toda la flota
