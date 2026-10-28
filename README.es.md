@@ -30,6 +30,7 @@
 | Guía | Contenido |
 |------|-----------|
 | **[README en Inglés](README.md)** | Arquitectura, stack de IA, cómo opera, instalación |
+| **[📖 Guía de instalación](docs/SETUP.md)** | Instalación paso a paso, configuración y solución de problemas (en inglés) |
 | **[Este README](README.es.md)** | Traducción completa al español |
 | **[.env.example](.env.example)** | Cada parámetro de configuración, documentado |
 

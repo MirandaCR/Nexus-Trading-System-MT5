@@ -30,6 +30,7 @@
 | Guide | What's inside |
 |-------|---------------|
 | **[This README](README.md)** | Architecture, AI stack, how it trades, setup |
+| **[📖 Setup & Deployment Guide](docs/SETUP.md)** | Step-by-step install, config, and troubleshooting — start here to run it |
 | **[README en Español](README.es.md)** | Full Spanish translation |
 | **[.env.example](.env.example)** | Every configuration knob, documented |
 
