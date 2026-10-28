@@ -2,7 +2,7 @@
 
 This guide walks you from a fresh clone to a running system. If you only read one thing, read **[Platform & MT5 — read this first](#-platform--mt5--read-this-first)**.
 
-> 🇪🇸 ¿Prefieres español? El [README en español](../README.es.md) tiene el mismo flujo de instalación resumido.
+> 🇪🇸 ¿Prefieres español? Lee la [**guía de instalación en español**](SETUP.es.md).
 
 ---
 
